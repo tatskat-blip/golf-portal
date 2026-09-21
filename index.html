@@ -151,7 +151,7 @@ section{border-bottom:1px solid var(--rule-hard)}
 .sheet-figcol .sheet-full.empty{width:120px;border:1px dashed var(--ink-3);display:flex;align-items:center;justify-content:center}
 @media(max-width:620px){
   .sheet-head{grid-template-columns:minmax(0,1fr) clamp(150px,50%,220px)}
-  .sheet-figcol{grid-row:1;min-height:0}
+  .sheet-figcol{grid-row:1;min-height:236px} /* ピルの折り返しでヘッダー高が変わっても人物の大きさをそろえる */
   .sheet-head .sheet-stats{grid-column:1/3}
 }
 .sheet-full{margin-right:38px;width:clamp(96px,26vw,150px);aspect-ratio:3/4;border:none;background:transparent;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
