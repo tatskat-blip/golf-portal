@@ -455,7 +455,7 @@ function renderLB(){
   document.getElementById('nextNo').textContent=`第${ROUNDS[i].no+1}戦`;
   document.getElementById('nextPill').textContent=R(ROUNDS[i].no+1);
   const over=r=>r.v-par, max=Math.max(...rows.map(over));
-  const netWinner=rows.length&&lbMode==='net'?rows[0].p.name:null;
+  const netWinner=rows.length?rows[0].p.name:null; // 1位はどちらの表示でもホログラム
   document.getElementById('lb').innerHTML=rows.map((r,idx)=>`
    <div class="lb-row${r.p.name===netWinner?' win':''}">
     <span class="lb-rank">${idx+1}</span>
@@ -479,7 +479,7 @@ const sparkPath=(vals,w,h,pad,lo=90,hi=180)=>{
   const c=pts.map(([i,n])=>[X(i),Y(n)]);
   return{d:c.map((q,k)=>(k?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' '),pts:c};
 };
-function renderPlist(){document.getElementById('plist').innerHTML=PLAYERS.slice().sort((a,b)=>a.hdcp-b.hdcp).map(p=>{
+function renderPlist(){document.getElementById('plist').innerHTML=PLAYERS.slice().sort((a,b)=>(a.best??999)-(b.best??999)||a.ave-b.ave||a.hdcp-b.hdcp).map(p=>{
   const sp=sparkPath(p.g,110,26,4);
   return `<button class="prow" data-n="${p.name}">
    ${avBox(p.name,'av')}
