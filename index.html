@@ -146,6 +146,8 @@ section{border-bottom:1px solid var(--rule-hard)}
 .sheet-fig{margin-right:38px;display:flex;flex-direction:column;align-items:center;gap:8px}
 .sheet-fig .sheet-full{margin-right:0}
 .sheet-full.is3d{overflow:visible}
+.sheet-full.swing{width:auto;height:clamp(128px,34.7vw,200px);aspect-ratio:949/720;align-items:flex-end}
+.sheet-full.swing img{height:100%;width:auto}
 .sheet-full.is3d model-viewer{width:100%;height:100%;background:transparent;--poster-color:transparent;--progress-bar-color:transparent;display:block}
 .mv-ctl{display:flex;gap:6px}
 .mv-ctl button{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.14em;padding:3px 9px;border:1px solid var(--ink);border-radius:999px;background:var(--paper);color:var(--ink);cursor:pointer}
@@ -408,6 +410,8 @@ const AVATARS={"タツヤ":{full:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA
 /* ---- remote data (Apps Script). API_URL が空なら埋め込みデータだけで動く ---- */
 /* ---- 3D avatars (GLB, model-viewer). 無い人は従来の全身PNG ---- */
 const AVATARS3D={}; // 3Dは保留中（2026-09-21）。使うときは {"アユミ":"assets/models/ayumi.glb"} のように登録
+/* ---- スイング動画（透過アニメWebP、GIFは予備）。fal MiniMax H3 で生成→クロマキー。作り方は design-language §3 ---- */
+const AVATARS_SWING={"アユミ":{webp:"assets/swing/ayumi_swing_lite.webp",gif:"assets/swing/ayumi_swing_lite.gif"}};
 const MV_SRC='https://cdn.jsdelivr.net/npm/@google/model-viewer@4.0.0/dist/model-viewer.min.js';
 let mvLoading=null; const ensureMV=()=>mvLoading||(mvLoading=new Promise(res=>{if(customElements.get('model-viewer'))return res();const sc=document.createElement('script');sc.type='module';sc.src=MV_SRC;sc.onload=res;sc.onerror=res;document.head.appendChild(sc);}));
 const API_URL='https://script.google.com/macros/s/AKfycbxvGV1hS8Y-GVfHLhIh1L0_c1iepQ0msUPuRRn14fnMu2hkxsWikZ1kTq_s-bP0WSlu/exec';
@@ -568,6 +572,7 @@ function openPlayer(name){
           </div>
         </div>
         ${AVATARS3D[p.name]?`<div class="sheet-fig"><div class="sheet-full is3d"><model-viewer id="mv3d" src="${AVATARS3D[p.name]}" alt="${p.name}" autoplay animation-name="preset:idle" camera-controls disable-zoom disable-pan interaction-prompt="none" shadow-intensity="0" exposure="1" camera-orbit="90deg 88deg auto" field-of-view="24deg" loading="eager"${AVATARS[p.name]?` poster="${AVATARS[p.name].full}"`:''}></model-viewer></div><div class="mv-ctl" role="group" aria-label="motion"><button type="button" data-a="preset:idle" aria-pressed="true">IDLE</button><button type="button" data-a="preset:walk" aria-pressed="false">WALK</button></div></div>`
+        :AVATARS_SWING[p.name]?`<div class="sheet-full swing"><picture><source type="image/webp" srcset="${AVATARS_SWING[p.name].webp}"><img src="${AVATARS_SWING[p.name].gif}" alt="${p.name}"></picture></div>`
         :AVATARS[p.name]?`<div class="sheet-full"><img src="${AVATARS[p.name].full}" alt="${p.name}"></div>`:`<div class="sheet-full empty"><span>NO AVATAR</span></div>`}
       </div>
       <div class="sheet-stats">
