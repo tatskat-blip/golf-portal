@@ -147,7 +147,7 @@ section{border-bottom:1px solid var(--rule-hard)}
 .sheet-figcol{grid-column:2;grid-row:1/3;position:relative;margin-right:22px;min-height:200px}
 .sheet-figcol .sheet-full,.sheet-figcol .sheet-fig{position:absolute;right:0;bottom:0;height:100%;width:auto;aspect-ratio:auto;margin:0;overflow:visible;display:block}
 .sheet-figcol .sheet-full img{height:100%;width:auto;max-width:none;display:block;position:absolute;right:0;bottom:0}
-.sheet-figcol .sheet-full.swing picture{position:absolute;right:0;bottom:0;height:100%}
+.sheet-figcol .sheet-full.swing picture{position:absolute;right:0;bottom:0;height:100%;transform:translateX(14%)} /* 人物を少し右へ（キャンバス幅の14%＝身長の約0.3倍）。振り抜いたクラブ先端は右端で切れてよい（2026-09-22ユーザー指示） */
 .sheet-figcol .sheet-full.empty{width:120px;border:1px dashed var(--ink-3);display:flex;align-items:center;justify-content:center}
 @media(max-width:620px){
   .sheet-head{grid-template-columns:minmax(0,1fr) clamp(150px,50%,220px)}
@@ -426,7 +426,7 @@ const AVATARS={"タツヤ":{full:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA
 /* ---- 3D avatars (GLB, model-viewer). 無い人は従来の全身PNG ---- */
 const AVATARS3D={}; // 3Dは保留中（2026-09-21）。使うときは {"アユミ":"assets/models/ayumi.glb"} のように登録
 /* ---- スイング動画（透過アニメWebP、GIFは予備）。fal MiniMax H3 で生成→クロマキー。作り方は design-language §3 ---- */
-const AVATARS_SWING={"アユミ":{webp:"assets/swing/ayumi_swing_lite.webp",gif:"assets/swing/ayumi_swing_lite.gif"},"ソン":{webp:"assets/swing/son_swing_lite.webp",gif:"assets/swing/son_swing_lite.gif"},"ナカニシ":{webp:"assets/swing/nakanishi_swing_lite.webp",gif:"assets/swing/nakanishi_swing_lite.gif"},"ミズタニ":{webp:"assets/swing/mizutani_swing_lite.webp",gif:"assets/swing/mizutani_swing_lite.gif"},"タツヤ":{webp:"assets/swing/tatsuya_swing_lite.webp",gif:"assets/swing/tatsuya_swing_lite.gif"},"ショー":{webp:"assets/swing/sho_swing_lite.webp",gif:"assets/swing/sho_swing_lite.gif"},"ウメ":{webp:"assets/swing/ume_swing_lite.webp",gif:"assets/swing/ume_swing_lite.gif"},"セコ":{webp:"assets/swing/seko_swing_lite.webp",gif:"assets/swing/seko_swing_lite.gif"},"ユウシ":{webp:"assets/swing/yushi_swing_lite.webp",gif:"assets/swing/yushi_swing_lite.gif"}}; // 9人全員（2026-09-21）
+const AVATARS_SWING={"アユミ":{webp:"assets/swing/ayumi_swing_lite.webp?v=2",gif:"assets/swing/ayumi_swing_lite.gif?v=2"},"ソン":{webp:"assets/swing/son_swing_lite.webp?v=2",gif:"assets/swing/son_swing_lite.gif?v=2"},"ナカニシ":{webp:"assets/swing/nakanishi_swing_lite.webp?v=2",gif:"assets/swing/nakanishi_swing_lite.gif?v=2"},"ミズタニ":{webp:"assets/swing/mizutani_swing_lite.webp?v=2",gif:"assets/swing/mizutani_swing_lite.gif?v=2"},"タツヤ":{webp:"assets/swing/tatsuya_swing_lite.webp?v=2",gif:"assets/swing/tatsuya_swing_lite.gif?v=2"},"ショー":{webp:"assets/swing/sho_swing_lite.webp?v=2",gif:"assets/swing/sho_swing_lite.gif?v=2"},"ウメ":{webp:"assets/swing/ume_swing_lite.webp?v=2",gif:"assets/swing/ume_swing_lite.gif?v=2"},"セコ":{webp:"assets/swing/seko_swing_lite.webp?v=2",gif:"assets/swing/seko_swing_lite.gif?v=2"},"ユウシ":{webp:"assets/swing/yushi_swing_lite.webp?v=2",gif:"assets/swing/yushi_swing_lite.gif?v=2"}}; // 9人全員（2026-09-21）
 const MV_SRC='https://cdn.jsdelivr.net/npm/@google/model-viewer@4.0.0/dist/model-viewer.min.js';
 let mvLoading=null; const ensureMV=()=>mvLoading||(mvLoading=new Promise(res=>{if(customElements.get('model-viewer'))return res();const sc=document.createElement('script');sc.type='module';sc.src=MV_SRC;sc.onload=res;sc.onerror=res;document.head.appendChild(sc);}));
 const API_URL='https://script.google.com/macros/s/AKfycbxvGV1hS8Y-GVfHLhIh1L0_c1iepQ0msUPuRRn14fnMu2hkxsWikZ1kTq_s-bP0WSlu/exec';
