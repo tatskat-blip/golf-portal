@@ -233,6 +233,14 @@ tfoot td.sc::before{visibility:hidden}
   .prow .pv.hide-sm,.phead .lbl.hide-sm{display:none}
   .prow .arrow{font-size:13px}
 }
+/* ---- motion B: 操作への応答（2026-09-22） ---- */
+.prow .arrow{transition:transform .18s ease}
+.prow:hover .arrow,.prow:active .arrow,.prow:focus-visible .arrow{transform:translateX(3px)}
+.scrim{animation:scrimIn .22s ease-out both}
+.sheet{animation:sheetIn .3s cubic-bezier(.2,.7,.2,1) both}
+@keyframes scrimIn{from{opacity:0}to{opacity:1}}
+@keyframes sheetIn{from{transform:translateY(18px);opacity:0}to{transform:none;opacity:1}}
+html.t-ready body,html.t-ready section,html.t-ready .next,html.t-ready .next-r,html.t-ready .sheet,html.t-ready .sheet-top,html.t-ready .prow,html.t-ready .lb-row,html.t-ready .pill,html.t-ready .toggle button,html.t-ready .themes button,html.t-ready .field,html.t-ready td,html.t-ready th,html.t-ready .sf input,html.t-ready .sf select{transition:background-color .35s ease,color .35s ease,border-color .35s ease}
 /* ---- motion A: データが立ち上がる（一度だけ、減速で止まる。2026-09-22） ---- */
 .lb-row .fill{transform-origin:left center}
 .reveal .lb-row .fill{animation:growX .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*70ms)}
@@ -301,13 +309,21 @@ tfoot td.sc::before{visibility:hidden}
             <div class="md" style="font-size:clamp(24px,3.6vw,36px);margin-top:12px">The next<br>battle is<br>coming.</div>
             <p class="mono" style="margin:12px 0 0;font-size:11px;letter-spacing:.06em;color:var(--ink-2);line-height:1.8;text-transform:uppercase">See you on the first tee.<br>Stay tuned.</p>
           </div>
-          <svg class="ill" viewBox="0 0 220 84" fill="none" stroke="currentColor" stroke-width=".9" aria-hidden="true" style="flex:0 0 clamp(150px,30%,220px);color:var(--ink)">
+          <svg class="ill" id="nextIll" viewBox="0 0 220 84" fill="none" stroke="currentColor" stroke-width=".9" aria-hidden="true" style="flex:0 0 clamp(150px,30%,220px);color:var(--ink)">
             <path d="M4 74 C 44 66, 70 78, 108 72 S 176 62, 216 70" stroke-linecap="round"/>
             <path d="M132 72 L 132 10" stroke-linecap="round"/>
-            <path d="M132 12 L 158 21 L 132 30 Z" stroke-linejoin="round"/>
+            <path d="M132 12 L 158 21 L 132 30 Z" stroke-linejoin="round">
+              <animate attributeName="d" dur="2.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".4 0 .6 1;.4 0 .6 1" values="M132 12 L 158 21 L 132 30 Z;M132 12 L 155 20 L 132 30 Z;M132 12 L 158 21 L 132 30 Z"/>
+            </path>
             <ellipse cx="132" cy="72" rx="11" ry="3.6"/>
-            <circle cx="50" cy="66" r="5"/>
-            <path d="M22 68 q 12 -20 24 -4" stroke-dasharray="3 3" stroke-linecap="round"/>
+            <!-- 飛跡（図面の記号として常時表示）と、その上を飛ぶボール。ティーで待つ→放物線→小さく跳ねる→転がってカップへ→消える→ティーに戻る、7秒周期 -->
+            <path id="flight" d="M50 66 Q 79 4 106 62 Q 113 50 121 67 L 132 70" stroke-dasharray="2.5 3" stroke-linecap="round" opacity=".7"/>
+            <circle id="ball" r="5" cx="0" cy="0">
+              <animateMotion dur="7s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;0.62;0.62;0.78;0.9;1;1" keyTimes="0;0.30;0.48;0.48;0.56;0.63;0.70;1">
+                <mpath href="#flight"/>
+              </animateMotion>
+              <animate attributeName="opacity" dur="7s" repeatCount="indefinite" values="1;1;0;0;1" keyTimes="0;0.70;0.73;0.97;1"/>
+            </circle>
           </svg>
         </div>
         <div class="next-l">
@@ -539,6 +555,7 @@ function renderTable(){
 }
 function renderAll(){renderRoster();renderLB();renderPlist();renderTable();armReveal();}
 const REDUCED=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(REDUCED){const ill=document.getElementById('nextIll'); if(ill&&ill.pauseAnimations){ill.pauseAnimations(); ill.setCurrentTime(0);}}
 function armReveal(){
   const secs=[document.getElementById('lb'),document.getElementById('plist')].filter(Boolean);
   secs.forEach(el=>el.classList.remove('reveal'));
@@ -714,6 +731,7 @@ loadRemote();
   if(saved==='light'||saved==='dark'||saved==='green')document.documentElement.setAttribute('data-theme',saved);
   mq.addEventListener('change',paint);
   paint();
+  setTimeout(()=>document.documentElement.classList.add('t-ready'),200);
 })();
 </script>
 <!-- /artifact-wrapper --></body></html>
