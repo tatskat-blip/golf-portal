@@ -158,7 +158,7 @@ section{border-bottom:1px solid var(--rule-hard)}
 .prow:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
 .prow .pname{font-weight:700;font-size:17px;display:flex;align-items:center;gap:9px;min-width:0;flex-wrap:wrap}
 .prow .pv{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:18px;font-variant-numeric:tabular-nums;text-align:right}
-.prow .arrow{font-family:"IBM Plex Mono",monospace;color:var(--ink-3);text-align:right;font-size:13px}
+.prow .arrow{font-family:"IBM Plex Mono",monospace;color:var(--ink-2);text-align:right;font-size:14px}
 
 /* rounds table */
 .tscroll{overflow-x:auto;border:1px solid var(--rule-hard)}
@@ -197,11 +197,11 @@ tfoot td.sc::before{visibility:hidden}
 
 /* modal */
 .scrim{position:fixed;inset:0;background:rgba(10,10,10,.55);backdrop-filter:blur(3px);z-index:40;display:flex;align-items:flex-end;justify-content:center}
-.sheet{background:var(--paper);width:100%;max-width:720px;max-height:92vh;overflow-y:auto;border:1px solid var(--rule-hard);border-bottom:0;position:relative}
-@media(min-width:720px){.scrim{align-items:center}.sheet{border-bottom:1px solid var(--rule-hard);max-height:88vh}}
+.sheet{background:var(--paper);width:100%;max-width:720px;max-height:92vh;max-height:92dvh;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;border:1px solid var(--rule-hard);border-bottom:0;position:relative}
+@media(min-width:720px){.scrim{align-items:center}.sheet{border-bottom:1px solid var(--rule-hard);max-height:88vh;max-height:88dvh}}
 .sheet-top{padding:26px 22px 22px;border-bottom:1px solid var(--rule-hard);background:var(--panel);position:relative}
 .sheet-name{font-family:"Zen Kaku Gothic New";font-weight:900;font-size:clamp(34px,7vw,54px);line-height:1;letter-spacing:.02em}
-.sheet-close{position:absolute;top:14px;right:14px;width:30px;height:30px;border:1px solid var(--ink);border-radius:50%;background:var(--paper);color:var(--ink);cursor:pointer;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1}
+.sheet-close{position:absolute;top:12px;right:12px;width:38px;height:38px;z-index:5;touch-action:manipulation;-webkit-tap-highlight-color:transparent;border:1px solid var(--ink);border-radius:50%;background:var(--paper);color:var(--ink);cursor:pointer;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1}
 .sheet-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr))}
 .sheet-stats div{padding:16px 18px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
 .sheet-stats .sv{font-family:"IBM Plex Mono",monospace;font-weight:700;font-size:28px;font-variant-numeric:tabular-nums;line-height:1.1}
@@ -218,9 +218,10 @@ tfoot td.sc::before{visibility:hidden}
 @media(max-width:620px){
   .lb-row{grid-template-columns:40px minmax(64px,1fr) 56px 70px}
   .lb-row .track{display:none}
-  .phead,.prow{grid-template-columns:44px minmax(0,1fr) 46px 46px 62px}
+  .phead,.prow{grid-template-columns:44px minmax(0,1fr) 46px 46px 16px;gap:10px}
   .av{width:44px;height:44px}
-  .prow .pv.hide-sm,.phead .lbl.hide-sm,.prow .arrow,.phead .arrow-h{display:none}
+  .prow .pv.hide-sm,.phead .lbl.hide-sm{display:none}
+  .prow .arrow{font-size:13px}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .entry .sf{display:grid;grid-template-columns:1fr;gap:12px;max-width:520px}
@@ -306,8 +307,8 @@ tfoot td.sc::before{visibility:hidden}
     <div class="sec-head">
       <div class="sec-title">Latest Result<span class="jp" id="lbTitle">最新結果 · R05</span></div>
       <div class="toggle" role="group" aria-label="順位の基準">
-        <button id="lbNet" aria-pressed="true">Net</button>
-        <button id="lbGross" aria-pressed="false">Gross</button>
+        <button id="lbGross" aria-pressed="true">Gross</button>
+        <button id="lbNet" aria-pressed="false">Net</button>
       </div>
     </div>
     <div class="sec-body">
@@ -334,7 +335,7 @@ tfoot td.sc::before{visibility:hidden}
         <span class="lbl">HDCP</span>
         <span class="lbl hide-sm">AVE</span>
         <span class="lbl">BEST</span>
-        <span class="lbl hide-sm">Net History</span>
+        <span class="lbl hide-sm">Gross History</span>
         <span class="lbl arrow-h"></span>
       </div>
       <div class="plist" id="plist"></div>
@@ -348,8 +349,8 @@ tfoot td.sc::before{visibility:hidden}
     <div class="sec-head">
       <div class="sec-title">Records<span class="jp">ラウンド記録</span></div>
       <div class="toggle" role="group" aria-label="スコア表示切替">
-        <button id="tNet" aria-pressed="true">Net</button>
-        <button id="tGross" aria-pressed="false">Gross</button>
+        <button id="tGross" aria-pressed="true">Gross</button>
+        <button id="tNet" aria-pressed="false">Net</button>
       </div>
     </div>
     <div class="sec-body">
@@ -444,7 +445,7 @@ const REG='<svg viewBox="0 0 12 12" stroke="currentColor" fill="none" stroke-wid
 function renderRoster(){document.getElementById('roster').innerHTML=PLAYERS.map(p=>`<span>${p.name}</span>`).join('')+`<span style="border-style:dashed">＋</span>`;}
 
 /* ---- leaderboard (R05) ---- */
-let lbMode='net';
+let lbMode='gross';
 const R=n=>'R'+String(n).padStart(2,'0');
 function renderLB(){
   const i=NR-1, par=ROUNDS[i].par;
@@ -472,15 +473,14 @@ bN.onclick=()=>{lbMode='net';bN.setAttribute('aria-pressed','true');bG.setAttrib
 bG.onclick=()=>{lbMode='gross';bG.setAttribute('aria-pressed','true');bN.setAttribute('aria-pressed','false');renderLB();};
 
 /* ---- players list ---- */
-const sparkPath=(nets,w,h,pad)=>{
-  const pts=nets.map((n,i)=>n==null?null:[i,n]).filter(Boolean);
-  const lo=60,hi=125;
+const sparkPath=(vals,w,h,pad,lo=90,hi=180)=>{
+  const pts=vals.map((n,i)=>n==null?null:[i,n]).filter(Boolean);
   const X=i=>pad+(i/(NR-1))*(w-pad*2), Y=n=>pad+(1-(Math.min(Math.max(n,lo),hi)-lo)/(hi-lo))*(h-pad*2);
   const c=pts.map(([i,n])=>[X(i),Y(n)]);
   return{d:c.map((q,k)=>(k?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' '),pts:c};
 };
 function renderPlist(){document.getElementById('plist').innerHTML=PLAYERS.slice().sort((a,b)=>a.hdcp-b.hdcp).map(p=>{
-  const sp=sparkPath(p.nets,110,26,4);
+  const sp=sparkPath(p.g,110,26,4);
   return `<button class="prow" data-n="${p.name}">
    ${avBox(p.name,'av')}
    <span class="pname">${p.name}
@@ -499,7 +499,7 @@ function renderPlist(){document.getElementById('plist').innerHTML=PLAYERS.slice(
   </button>`}).join('');}
 
 /* ---- rounds table ---- */
-let mode='net';
+let mode='gross';
 function renderTable(){
   const t=document.getElementById('rtable');
   const head=`<thead><tr><th><span class="lbl">Round</span></th><th style="text-align:left"><span class="lbl">Course</span></th><th class="par"><span class="lbl">Par</span></th>${PLAYERS.map((p,c)=>`<th class="sc" data-col="${c}">${p.name}<span class="lbl">H ${p.hdcp}</span></th>`).join('')}</tr></thead>`;
@@ -549,11 +549,11 @@ let lastFocus=null;
 function openPlayer(name){
   const p=PLAYERS.find(x=>x.name===name); if(!p)return;
   lastFocus=document.activeElement;
-  const W=560,H=132,PAD=26,lo=60,hi=130;
+  const W=560,H=132,PAD=26,lo=90,hi=180;
   const X=i=>PAD+(i/(NR-1))*(W-PAD*2-16), Y=n=>16+(1-(Math.min(Math.max(n,lo),hi)-lo)/(hi-lo))*(H-46);
-  const pts=p.nets.map((n,i)=>n==null?null:[X(i),Y(n),n]).filter(Boolean);
+  const pts=p.g.map((n,i)=>n==null?null:[X(i),Y(n),n]).filter(Boolean);
   const d=pts.map((c,k)=>(k?'L':'M')+c[0].toFixed(1)+' '+c[1].toFixed(1)).join(' ');
-  const gl=[70,90,110].map(v=>`<line x1="${PAD-8}" y1="${Y(v)}" x2="${W-16}" y2="${Y(v)}" stroke="var(--rule)"/><text x="0" y="${(Y(v)+3.5).toFixed(1)}" font-size="9" font-family="IBM Plex Mono, monospace" fill="var(--ink-3)">${v}</text>`).join('');
+  const gl=[100,120,140,160].map(v=>`<line x1="${PAD-8}" y1="${Y(v)}" x2="${W-16}" y2="${Y(v)}" stroke="var(--rule)"/><text x="0" y="${(Y(v)+3.5).toFixed(1)}" font-size="9" font-family="IBM Plex Mono, monospace" fill="var(--ink-3)">${v}</text>`).join('');
   root.innerHTML=`<div class="scrim" id="scrim">
     <div class="sheet" role="dialog" aria-modal="true" aria-label="${p.name} の記録">
       <div class="sheet-top">
@@ -581,7 +581,7 @@ function openPlayer(name){
         <svg class="ruler" viewBox="0 0 560 78" aria-hidden="true">${ruler(560,78,PLAYERS.map(q=>({v:q.hdcp,name:q.name})),p.name)}</svg>
       </div>
       <div class="sheet-sec">
-        <span class="lbl" style="margin-bottom:10px">Net Score History — R01 → ${R(ROUNDS[NR-1].no)}</span>
+        <span class="lbl" style="margin-bottom:10px">Gross Score History — R01 → ${R(ROUNDS[NR-1].no)}</span>
         <svg class="spark" viewBox="0 0 ${W} ${H}" fill="none" aria-hidden="true">
           ${gl}
           <path d="${d}" stroke="var(--ink)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
