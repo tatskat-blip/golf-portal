@@ -162,7 +162,7 @@ section{border-bottom:1px solid var(--rule-hard)}
 .sheet-full.empty span{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;color:var(--ink-3)}
 .phead{padding:0 2px 9px}
 .phead .lbl{text-align:right}.phead .lbl:nth-child(-n+2){text-align:left}
-.phead .lbl:nth-child(6){text-align:center} /* 6列目＝スパークラインは見出しも中身も中央揃え（2026-09-22） */
+.phead .lbl:nth-child(6){text-align:left} /* 6列目＝スパークラインは見出しも中身も左揃え（2026-09-22確定） */
 .prow{width:100%;text-align:left;padding:15px 2px;border-bottom:1px solid var(--rule);background:none;border-left:0;border-right:0;border-top:0;color:inherit;cursor:pointer;font:inherit}
 .prow:hover{background:var(--panel)}
 .prow:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
@@ -497,7 +497,7 @@ function renderPlist(){document.getElementById('plist').innerHTML=PLAYERS.slice(
    <span class="pv">${p.hdcp}</span>
    <span class="pv hide-sm">${p.ave}</span>
    <span class="pv">${p.best}</span>
-   <span class="pv hide-sm" style="text-align:center">
+   <span class="pv hide-sm" style="text-align:left">
      <svg viewBox="0 0 110 26" width="110" height="26" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
        <path d="${sp.d}" stroke-linejoin="round" stroke-linecap="round"/>
        ${sp.pts.map((c,k)=>`<circle cx="${c[0].toFixed(1)}" cy="${c[1].toFixed(1)}" r="${k===sp.pts.length-1?2.4:1.5}" fill="${k===sp.pts.length-1?'currentColor':'var(--paper)'}"/>`).join('')}
