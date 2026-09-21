@@ -146,7 +146,8 @@ section{border-bottom:1px solid var(--rule-hard)}
 .sheet-fig{margin-right:38px;display:flex;flex-direction:column;align-items:center;gap:8px}
 .sheet-fig .sheet-full{margin-right:0}
 .sheet-full.is3d{overflow:visible}
-.sheet-full.swing{width:auto;height:clamp(128px,34.7vw,200px);aspect-ratio:949/720;align-items:flex-end}
+.sheet-full.swing{overflow:visible} /* 枠はPNGと同寸。振り幅ぶんだけ左右にはみ出す */
+.sheet-full.swing picture{display:block;height:100%}
 .sheet-full.swing img{height:100%;width:auto}
 .sheet-full.is3d model-viewer{width:100%;height:100%;background:transparent;--poster-color:transparent;--progress-bar-color:transparent;display:block}
 .mv-ctl{display:flex;gap:6px}
