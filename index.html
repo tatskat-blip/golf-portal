@@ -316,13 +316,13 @@ html.t-ready body,html.t-ready section,html.t-ready .next,html.t-ready .next-r,h
               <animate attributeName="d" dur="2.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".4 0 .6 1;.4 0 .6 1" values="M132 12 L 158 21 L 132 30 Z;M132 12 L 155 20 L 132 30 Z;M132 12 L 158 21 L 132 30 Z"/>
             </path>
             <ellipse cx="132" cy="72" rx="11" ry="3.6"/>
-            <!-- 飛跡（図面の記号として常時表示）と、その上を飛ぶボール。ティーで待つ→放物線→小さく跳ねる→転がってカップへ→消える→ティーに戻る、7秒周期 -->
+            <!-- 飛跡（図面の記号として常時表示）と、その上を飛ぶボール。ティーで待つ1.5秒→放物線0.45秒→跳ね0.2秒→転がり0.3秒でカップへ→消えて戻る、5秒周期（2026-09-22 高速化） -->
             <path id="flight" d="M50 66 Q 79 4 106 62 Q 113 50 121 67 L 132 70" stroke-dasharray="2.5 3" stroke-linecap="round" opacity=".7"/>
             <circle id="ball" r="5" cx="0" cy="0">
-              <animateMotion dur="7s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;0.62;0.62;0.78;0.9;1;1" keyTimes="0;0.30;0.48;0.48;0.56;0.63;0.70;1">
+              <animateMotion dur="5s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;0.62;0.62;0.78;0.9;1;1" keyTimes="0;0.30;0.39;0.39;0.43;0.46;0.49;1">
                 <mpath href="#flight"/>
               </animateMotion>
-              <animate attributeName="opacity" dur="7s" repeatCount="indefinite" values="1;1;0;0;1" keyTimes="0;0.70;0.73;0.97;1"/>
+              <animate attributeName="opacity" dur="5s" repeatCount="indefinite" values="1;1;0;0;1" keyTimes="0;0.49;0.51;0.97;1"/>
             </circle>
           </svg>
         </div>
