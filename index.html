@@ -1,4 +1,4 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><title>PILOTIS CLASSIC</title></head><body style="margin:0"><!-- artifact-wrapper -->
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><title>PILOTIS CLASSIC</title><link rel="icon" href="assets/icon/favicon.svg" type="image/svg+xml"><link rel="icon" href="assets/icon/favicon-32.png" sizes="32x32" type="image/png"><link rel="apple-touch-icon" href="assets/icon/apple-touch-icon.png"><link rel="manifest" href="assets/icon/site.webmanifest"><meta name="apple-mobile-web-app-title" content="PILOTIS"><meta name="theme-color" content="#ffffff"></head><body style="margin:0"><!-- artifact-wrapper -->
 <title>ピロティクラシック</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -233,6 +233,16 @@ tfoot td.sc::before{visibility:hidden}
   .prow .pv.hide-sm,.phead .lbl.hide-sm{display:none}
   .prow .arrow{font-size:13px}
 }
+/* ---- motion A: データが立ち上がる（一度だけ、減速で止まる。2026-09-22） ---- */
+.lb-row .fill{transform-origin:left center}
+.reveal .lb-row .fill{animation:growX .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*70ms)}
+@keyframes growX{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.prow svg path{stroke-dasharray:1;stroke-dashoffset:0}
+.reveal .prow svg path{animation:drawLine .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*60ms)}
+@keyframes drawLine{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.reveal .prow svg circle{animation:dotIn .3s ease-out both;animation-delay:calc(var(--i,0)*60ms + .55s)}
+@keyframes dotIn{from{opacity:0}to{opacity:1}}
+.ruler .rmark{transition:transform .7s cubic-bezier(.2,.7,.2,1)}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .entry .sf{display:grid;grid-template-columns:1fr;gap:12px;max-width:520px}
 .entry .sf label{display:flex;flex-direction:column;gap:6px}
@@ -465,7 +475,7 @@ function renderLB(){
   const over=r=>r.v-par, max=Math.max(...rows.map(over));
   const netWinner=rows.length?rows[0].p.name:null; // 1位はどちらの表示でもホログラム
   document.getElementById('lb').innerHTML=rows.map((r,idx)=>`
-   <div class="lb-row${r.p.name===netWinner?' win':''}">
+   <div class="lb-row${r.p.name===netWinner?' win':''}" style="--i:${idx}">
     <span class="lb-rank">${idx+1}</span>
     <span class="lb-name">${r.p.name}</span>
     <span class="lb-net">${r.v}</span>
@@ -487,9 +497,9 @@ const sparkPath=(vals,w,h,pad,lo=90,hi=180)=>{
   const c=pts.map(([i,n])=>[X(i),Y(n)]);
   return{d:c.map((q,k)=>(k?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' '),pts:c};
 };
-function renderPlist(){document.getElementById('plist').innerHTML=PLAYERS.slice().sort((a,b)=>(a.best??999)-(b.best??999)||a.ave-b.ave||a.hdcp-b.hdcp).map(p=>{
+function renderPlist(){document.getElementById('plist').innerHTML=PLAYERS.slice().sort((a,b)=>(a.best??999)-(b.best??999)||a.ave-b.ave||a.hdcp-b.hdcp).map((p,idx)=>{
   const sp=sparkPath(p.g,110,26,4);
-  return `<button class="prow" data-n="${p.name}">
+  return `<button class="prow" data-n="${p.name}" style="--i:${idx}">
    ${avBox(p.name,'av')}
    <span class="pname">${p.name}
      ${p.wins?`<span class="pill ${p.wins>=2?'holo':'fill'}">${p.wins} WIN</span>`:''}
@@ -499,7 +509,7 @@ function renderPlist(){document.getElementById('plist').innerHTML=PLAYERS.slice(
    <span class="pv">${p.best}</span>
    <span class="pv hide-sm" style="text-align:left">
      <svg viewBox="0 0 110 26" width="110" height="26" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
-       <path d="${sp.d}" stroke-linejoin="round" stroke-linecap="round"/>
+       <path d="${sp.d}" pathLength="1" stroke-linejoin="round" stroke-linecap="round"/>
        ${sp.pts.map((c,k)=>`<circle cx="${c[0].toFixed(1)}" cy="${c[1].toFixed(1)}" r="${k===sp.pts.length-1?2.4:1.5}" fill="${k===sp.pts.length-1?'currentColor':'var(--paper)'}"/>`).join('')}
      </svg>
    </span>
@@ -527,7 +537,15 @@ function renderTable(){
     ? '● = その日のネット1位。R04（四街道）は Par 70 のため他戦より2打有利に出ます。'
     : 'Net = Gross − 調整HDCP（最新値で全戦を遡った参考値）。● = その日のネット1位。';
 }
-function renderAll(){renderRoster();renderLB();renderPlist();renderTable();}
+function renderAll(){renderRoster();renderLB();renderPlist();renderTable();armReveal();}
+const REDUCED=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function armReveal(){
+  const secs=[document.getElementById('lb'),document.getElementById('plist')].filter(Boolean);
+  secs.forEach(el=>el.classList.remove('reveal'));
+  if(REDUCED||!('IntersectionObserver' in window)){secs.forEach(el=>el.classList.add('reveal'));return;}
+  const io=new IntersectionObserver((es,obs)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('reveal');obs.unobserve(e.target);}});},{threshold:.25});
+  secs.forEach(el=>io.observe(el));
+}
 renderAll();
 const tg=document.getElementById('tGross'),tn=document.getElementById('tNet');
 tg.onclick=()=>{mode='gross';tg.setAttribute('aria-pressed','true');tn.setAttribute('aria-pressed','false');renderTable();};
@@ -546,8 +564,10 @@ function ruler(w,h,marks,focus){
   marks.forEach(m=>{
     const x=X(m.v).toFixed(1), f=focus?m.name===focus:true;
     if(!f){s+=`<circle cx="${x}" cy="${base-18}" r="2.2" fill="var(--ink-3)"/>`;return;}
-    s+=`<polygon points="${x},${base-13} ${(+x-6).toFixed(1)},${base-23} ${(+x+6).toFixed(1)},${base-23}" fill="var(--ink)"/>`;
+    const dx=(X(m.v)-X(0)).toFixed(1);
+    s+=`<g class="rmark" data-dx="${dx}" style="transform:translateX(${focus?'-'+dx:'0'}px)"><polygon points="${x},${base-13} ${(+x-6).toFixed(1)},${base-23} ${(+x+6).toFixed(1)},${base-23}" fill="var(--ink)"/>`;
     if(focus)s+=`<text x="${x}" y="${base-29}" font-size="12" font-weight="700" text-anchor="middle" font-family="IBM Plex Mono, monospace" fill="var(--ink)">${m.v}</text>`;
+    s+=`</g>`;
   });
   return s;
 }
@@ -633,6 +653,11 @@ function openPlayer(name){
   document.body.style.overflow='hidden';
   document.getElementById('closeBtn').focus();
   if(API_URL)wireScoreForm(p);
+  if(!REDUCED){
+    setTimeout(()=>{root.querySelectorAll('.ruler .rmark').forEach(g=>{g.style.transform='translateX(0)';});},30);
+    root.querySelectorAll('.sheet-stats .sv').forEach(el=>{const v=parseInt(el.textContent,10); if(!isFinite(v))return; const t0=performance.now(),D=650;
+      const tick=t=>{const k=Math.min(1,(t-t0)/D), e=1-Math.pow(1-k,3); el.textContent=Math.round(v*e); if(k<1)requestAnimationFrame(tick); else el.textContent=v;}; requestAnimationFrame(tick);});
+  }
 }
 function closeModal(){root.innerHTML='';document.body.style.overflow='';if(lastFocus)lastFocus.focus();}
 document.getElementById('plist').addEventListener('click',e=>{const b=e.target.closest('.prow');if(b)openPlayer(b.dataset.n);});
