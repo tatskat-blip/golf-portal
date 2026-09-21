@@ -161,7 +161,7 @@ section{border-bottom:1px solid var(--rule-hard)}
 .sheet-full.swing img{height:100%;width:auto}
 .sheet-full.empty span{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;color:var(--ink-3)}
 .phead{padding:0 2px 9px}
-.phead .lbl{text-align:right}.phead .lbl:nth-child(-n+2){text-align:left}
+.phead .lbl{text-align:right}.phead .lbl:nth-child(-n+2),.phead .lbl:nth-child(6){text-align:left} /* 6列目＝スパークラインは行側が左寄せなので見出しも左に（2026-09-22） */
 .prow{width:100%;text-align:left;padding:15px 2px;border-bottom:1px solid var(--rule);background:none;border-left:0;border-right:0;border-top:0;color:inherit;cursor:pointer;font:inherit}
 .prow:hover{background:var(--panel)}
 .prow:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
