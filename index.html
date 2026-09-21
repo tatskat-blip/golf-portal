@@ -147,7 +147,8 @@ section{border-bottom:1px solid var(--rule-hard)}
 .sheet-figcol{grid-column:2;grid-row:1/3;position:relative;margin-right:22px;min-height:200px}
 .sheet-figcol .sheet-full,.sheet-figcol .sheet-fig{position:absolute;right:0;bottom:0;height:100%;width:auto;aspect-ratio:auto;margin:0;overflow:visible;display:block}
 .sheet-figcol .sheet-full img{height:100%;width:auto;max-width:none;display:block;position:absolute;right:0;bottom:0}
-.sheet-figcol .sheet-full.swing picture{position:absolute;right:0;bottom:0;height:100%;transform:translateX(32%)} /* 人物を右へ（キャンバス幅の32%＝身長の約0.67倍。スマホでは画面幅の約2/3の位置）。振り抜いたクラブ先端は右端で切れてよい（2026-09-22ユーザー指示） */
+.sheet-figcol .sheet-full.swing picture{position:absolute;right:0;bottom:0;height:100%;}
+.sheet-figcol .sheet-full.swing img{transform:translateX(18%)} /* 人物を右へ（画像幅の18%＝身長の約0.38倍。スマホでは画面幅の約2/3の位置）。picture は幅0なので img に付ける。振り抜いたクラブ先端は右端で切れてよい（2026-09-22ユーザー指示） */
 .sheet-figcol .sheet-full.empty{width:120px;border:1px dashed var(--ink-3);display:flex;align-items:center;justify-content:center}
 @media(max-width:620px){
   .sheet-head{grid-template-columns:minmax(0,1fr) clamp(150px,50%,220px)}
