@@ -233,6 +233,14 @@ tfoot td.sc::before{visibility:hidden}
   .prow .pv.hide-sm,.phead .lbl.hide-sm{display:none}
   .prow .arrow{font-size:13px}
 }
+/* ---- falling sticker（2026-10-03）: 20〜30秒ごとに1枚、上から回転しながら落ちて下で消える。操作は素通し ---- */
+#fallLayer{position:fixed;inset:0;pointer-events:none;z-index:30;overflow:hidden}
+.fall{position:absolute;top:0;left:0;will-change:transform;animation:fallY var(--d,8s) cubic-bezier(.3,0,.7,1) forwards}
+.fall .sway{animation:sway var(--sw,3.4s) ease-in-out infinite alternate}
+.fall img{display:block;width:var(--w,150px);height:auto;animation:spin var(--d,8s) linear forwards;filter:drop-shadow(0 6px 14px rgba(10,10,10,.12))}
+@keyframes fallY{from{transform:translate3d(var(--x,50vw),-260px,0)}to{transform:translate3d(var(--x,50vw),calc(100vh + 60px),0)}}
+@keyframes sway{from{transform:translateX(calc(var(--amp,22px) * -1))}to{transform:translateX(var(--amp,22px))}}
+@keyframes spin{from{transform:rotate(var(--r0,0deg))}to{transform:rotate(var(--r1,320deg))}}
 /* ---- motion B: 操作への応答（2026-09-22） ---- */
 .prow .arrow{transition:transform .18s ease}
 .prow:hover .arrow,.prow:active .arrow,.prow:focus-visible .arrow{transform:translateX(3px)}
@@ -411,6 +419,7 @@ html.t-ready body,html.t-ready section,html.t-ready .next,html.t-ready .next-r,h
   </div>
 </div>
 
+<div id="fallLayer" aria-hidden="true"></div>
 <div id="modalRoot"></div>
 
 <script>
@@ -709,6 +718,30 @@ function wireScoreForm(p){
   };
 }
 loadRemote();
+
+/* ---- falling sticker ---- */
+const STICKERS=['assets/sticker/pin_ball_640.png?v=3'];
+(function(){
+  const layer=document.getElementById('fallLayer'); if(!layer||REDUCED)return;
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  function drop(){
+    if(document.hidden)return;
+    const el=document.createElement('div'); el.className='fall';
+    const vw=innerWidth, w=Math.round(Math.min(Math.max(vw*.22,120),190)), x=Math.max(8,Math.round(rnd(w*.3,vw-w*1.3)));
+    const r0=Math.round(rnd(-40,40)), r1=r0+Math.round(rnd(200,420))*(Math.random()<.5?-1:1);
+    el.style.cssText=`--x:${x}px;--w:${w}px;--d:${rnd(7.5,10).toFixed(1)}s;--sw:${rnd(2.6,3.8).toFixed(1)}s;--amp:${Math.round(rnd(14,30))}px;--r0:${r0}deg;--r1:${r1}deg`;
+    const img=document.createElement('img'); img.src=STICKERS[Math.floor(Math.random()*STICKERS.length)]; img.alt=''; img.decoding='async';
+    const sw=document.createElement('div'); sw.className='sway'; sw.appendChild(img); el.appendChild(sw); layer.appendChild(el);
+    el.addEventListener('animationend',e=>{if(e.target===el)el.remove();});
+  }
+  function schedule(ms){setTimeout(()=>{drop();schedule(rnd(20000,30000));},ms);}
+  const DBG=location.search.match(/[?&]drop(?:=([\d.]+))?/); // ?drop で即1枚、?drop=0.4 でその進捗で静止（確認用）
+  if(DBG){setTimeout(()=>{Object.defineProperty(document,'hidden',{get:()=>false,configurable:true});drop();
+    if(DBG[1]){const el=layer.lastElementChild, d=parseFloat(el.style.getPropertyValue('--d')); const dl=(-parseFloat(DBG[1])*d)+'s';
+      el.style.animationDelay=dl; el.style.animationPlayState='paused'; const im=el.querySelector('img'); im.style.animationDelay=dl; im.style.animationPlayState='paused'; el.querySelector('.sway').style.animationPlayState='paused';}},400);}
+  schedule(6000);
+  window.__drop=drop; // 動作確認用
+})();
 
 /* ---- theme ---- */
 (function(){
